@@ -1,8 +1,8 @@
-﻿using Point = (int x, int y);
-namespace d9.dgl;
+﻿namespace d9.dgl;
 public readonly struct Board<T>(T[,] values)
+    where T : struct
 {
-    private readonly T[,] _values = values;
+    private readonly T[,] _values = (T[,])values.Clone();
     public int Width => _values.GetLength(0);
     public int Height => _values.GetLength(1);
     public T this[int x, int y]
@@ -21,4 +21,9 @@ public readonly struct Board<T>(T[,] values)
                     yield return this[x, y];
             }
     }
+    public static implicit operator T[,](Board<T> board)
+        // https://stackoverflow.com/a/39281887
+        => (T[,])board._values.Clone();
+    public static implicit operator Board<T>(T[,] values)
+        => new(values);
 }
