@@ -1,51 +1,25 @@
 "use strict";
-// https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
-const canvas = document.getElementById("canvas");
-// https://stackoverflow.com/a/43525969
-// https://kernhanda.github.io/tutorial-typescript-canvas-drawing/
-if (!(canvas instanceof HTMLCanvasElement))
-    throw new Error("canvas is not an HTMLCanvasElement!");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const board_1 = __importDefault(require("./board"));
+// Canvas API:                      https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
+// Assert type of HTML element:     https://stackoverflow.com/a/43525969
+// Draw on a canvas in TS:          https://kernhanda.github.io/tutorial-typescript-canvas-drawing/
+// Building document in JS:         https://stackoverflow.com/a/9643489
+function renderBoardToCanvas(board, context) {
+    board.render(context);
+}
+const canvas = document.createElement("canvas");
+canvas.height = 200;
+canvas.width = 200;
 const context = canvas.getContext("2d");
 if (!(context instanceof CanvasRenderingContext2D))
     throw new Error("context is not a CanvasRenderingContext2D!");
 context.fillStyle = "black";
-class Board {
-    constructor(width, height) {
-        // https://stackoverflow.com/a/47801159
-        this._board = new Array();
-        for (let x = 0; x < width; x++) {
-            this._board[x] = new Array();
-            for (let y = 0; y < height; y++) {
-                this._board[x][y] = false;
-            }
-        }
-    }
-    get width() {
-        return this._board.length;
-    }
-    get height() {
-        return this._board[0].length;
-    }
-    render(context) {
-        // avoid (permanently) mutating the context
-        let originalFillStyle = context.fillStyle;
-        let canvas = context.canvas;
-        if (canvas.width < this.width || canvas.height < this.height) {
-            throw new Error(`Tried to render a board of dimension ${this.width}x${this.height} on a canvas of dimension ${canvas.width}x${canvas.height}!`);
-        }
-        for (let x = 0; x < this.width; x++) {
-            for (let y = 0; y < this.height; y++) {
-                context.fillStyle = this._board[x][y] ? "black" : "magenta";
-                context.fillRect(x, y, 1, 1);
-            }
-        }
-        context.fillStyle = originalFillStyle;
-    }
-}
-let board = new Board(200, 200);
-// todo: context as an argument
-function test() {
-    if (!(context instanceof CanvasRenderingContext2D))
-        throw new Error("test(): context is not a CanvasRenderingContext2D!");
-    board.render(context);
-}
+const startButton = document.createElement("input");
+startButton.type = "button";
+let board = new board_1.default(200, 200);
+startButton.addEventListener("click", () => renderBoardToCanvas(board, context));
+document.append(canvas, startButton);

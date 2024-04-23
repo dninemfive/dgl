@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "target": "ES6",
-      "module": "CommonJS",
+      "module": "nodenext",
       "rootDir": "src",
       "outDir": "",
       "strict": true
