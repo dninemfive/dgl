@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-      "target": "ES6",
-      "module": "nodenext",
-      "rootDir": "src",
-      "outDir": "",
-      "strict": true
-    }
-}
