@@ -3,8 +3,10 @@ const canvas = document.getElementById("canvas");
 // https://stackoverflow.com/a/43525969
 // https://kernhanda.github.io/tutorial-typescript-canvas-drawing/
 if(!(canvas instanceof HTMLCanvasElement))
-    throw new Error("canvas is not an HTMLCanvasElement!")
-const context: CanvasRenderingContext2D = canvas.getContext("2d")
+    throw new Error("canvas is not an HTMLCanvasElement!");
+const context = canvas.getContext("2d")
+if(!(context instanceof CanvasRenderingContext2D))
+    throw new Error("context is not a CanvasRenderingContext2D!");
 context.fillStyle = "black"
 
 class Board {
@@ -43,6 +45,9 @@ class Board {
 }
 
 let board: Board = new Board(200, 200);
+// todo: context as an argument
 function test(): void {
+    if(!(context instanceof CanvasRenderingContext2D))
+        throw new Error("test(): context is not a CanvasRenderingContext2D!");
     board.render(context);
 }

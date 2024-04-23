@@ -1,3 +1,4 @@
+"use strict";
 // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
 const canvas = document.getElementById("canvas");
 // https://stackoverflow.com/a/43525969
@@ -5,6 +6,8 @@ const canvas = document.getElementById("canvas");
 if (!(canvas instanceof HTMLCanvasElement))
     throw new Error("canvas is not an HTMLCanvasElement!");
 const context = canvas.getContext("2d");
+if (!(context instanceof CanvasRenderingContext2D))
+    throw new Error("context is not a CanvasRenderingContext2D!");
 context.fillStyle = "black";
 class Board {
     constructor(width, height) {
@@ -40,6 +43,9 @@ class Board {
     }
 }
 let board = new Board(200, 200);
+// todo: context as an argument
 function test() {
+    if (!(context instanceof CanvasRenderingContext2D))
+        throw new Error("test(): context is not a CanvasRenderingContext2D!");
     board.render(context);
 }
