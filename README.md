@@ -1,1 +1,1 @@
-# D9's Game of Life
+# d9's Game of Life
