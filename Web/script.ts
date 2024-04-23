@@ -4,7 +4,7 @@ const canvas = document.getElementById("canvas");
 // https://kernhanda.github.io/tutorial-typescript-canvas-drawing/
 if(!(canvas instanceof HTMLCanvasElement))
     throw new Error("canvas is not an HTMLCanvasElement!")
-let context: CanvasRenderingContext2D = canvas.getContext("2d")
+const context: CanvasRenderingContext2D = canvas.getContext("2d")
 context.fillStyle = "black"
 
 class Board {
@@ -34,10 +34,15 @@ class Board {
         }
         for(let x: number = 0; x < this.width; x++) {
             for(let y: number = 0; y < this.height; y++) {
-                context.fillStyle = this._board[x][y] ? "black" : "white";
+                context.fillStyle = this._board[x][y] ? "black" : "magenta";
                 context.fillRect(x, y, 1, 1)
             }
         }
         context.fillStyle = originalFillStyle;
     }
+}
+
+let board: Board = new Board(200, 200);
+function test(): void {
+    board.render(context);
 }
