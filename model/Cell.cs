@@ -19,14 +19,25 @@ public readonly struct Cell
     }
     public Cell(Cell previous, IEnumerable<Cell> neighbors)
     {
-        foreach (Component component in Components.All)
-        {
-            byte val = previous[component];
-            foreach (Rule rule in Rules.For(component))
-                val = val.Add(rule(previous, neighbors));
-            _rgb[(int)component] = val;
-        }
+        CellDelta delta = new();
+        foreach (Rule rule in Rules.All)
+            delta += rule(previous, neighbors);
     }
     public byte this[Component c] => _rgb[(int)c];
-    public int Total => _rgb.Select(x => (int)x).Sum();    
+    public int Total => _rgb.Select(x => (int)x).Sum();
+    public static Cell operator +(Cell cell, CellDelta delta)
+        => new(cell.R.Add(delta.R), cell.G.Add(delta.G), cell.B.Add(delta.B));
+}
+public readonly struct CellDelta
+{
+    public readonly int R, G, B;
+    public CellDelta() : this(0, 0, 0) { }
+    public CellDelta(int r, int g, int b)
+    {
+        R = r;
+        G = g;
+        B = b;
+    }
+    public static CellDelta operator+(CellDelta a, CellDelta b) => new(a.R + b.R, a.G + b.G, a.B + b.B);
+    public static implicit operator CellDelta((int r, int g, int b) t) => new(t.r, t.g, t.b);
 }
