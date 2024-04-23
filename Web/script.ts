@@ -19,21 +19,21 @@ class Board {
             }
         }
     }
-    width(): number {
+    public get width(): number {
         return this._board.length;
     }
-    height(): number {
+    public get height(): number {
         return this._board[0].length;
     }
     render(context: CanvasRenderingContext2D): void {
         // avoid (permanently) mutating the context
         let originalFillStyle: string|CanvasGradient|CanvasPattern = context.fillStyle;
         let canvas: HTMLCanvasElement = context.canvas;
-        if(canvas.width < this.width() || canvas.height < this.height()) {
-            throw new Error(`Tried to render a board of dimension ${this.width()}x${this.height()} on a canvas of dimension ${canvas.width}x${canvas.height}!`);
+        if(canvas.width < this.width || canvas.height < this.height) {
+            throw new Error(`Tried to render a board of dimension ${this.width}x${this.height} on a canvas of dimension ${canvas.width}x${canvas.height}!`);
         }
-        for(let x: number = 0; x < this.width(); x++) {
-            for(let y: number = 0; y < this.height(); y++) {
+        for(let x: number = 0; x < this.width; x++) {
+            for(let y: number = 0; y < this.height; y++) {
                 context.fillStyle = this._board[x][y] ? "black" : "white";
                 context.fillRect(x, y, 1, 1)
             }
