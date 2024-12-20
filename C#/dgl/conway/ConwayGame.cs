@@ -3,25 +3,27 @@
 namespace d9.dgl.conway;
 public class ConwayGame
 {
-    private readonly List<ConwayState> _states = [];
-    public ConwayState LatestState => _states.Last();
-    public int Width => 
+    private readonly List<ConwayDiff> _diffs = [];
+    public ConwayState CurrentState;
+    public int Width => CurrentState.Width;
+    public int Height => CurrentState.Height;
     public ConwayGame(int width, int height, double cellProbability)
     {
         Random random = new();
         ConwayCell[,] state = new ConwayCell[width, height];
         foreach((int x, int y) in state.AllPoints())
         {
-            state[x, y] = (byte)(random.NextDouble() < cellProbability ? 1 : 0);
+            state[x, y] = random.NextDouble() < cellProbability;
         }
-        _states.Add(state);
+        CurrentState = state;
     }
     private async Task<ConwayState> Evolve()
     {        
-        ConwayState next = await Task.Run(LatestState.Evolve);
-        lock(_states)
-            _states.Add(next);
-        return next;
+        ConwayDiff diff = await Task.Run(CurrentState.Evolve);
+        lock(_diffs)
+            _diffs.Add(diff);
+        CurrentState += diff;
+        return CurrentState;
     }
     public async IAsyncEnumerable<ConwayState> Evolve(int times = 1)
     {

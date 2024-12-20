@@ -2,31 +2,46 @@
 
 public readonly struct ConwayState(ConwayGrid grid)
 {
-    public readonly ConwayGrid _grid = grid;
+    private readonly ConwayGrid _grid = grid;
+    public int Width => _grid.Width;
+    public int Height => _grid.Height;
     public IEnumerable<ConwayCell> NeighborsOf(Point p)
     {
         foreach (Point neighbor in _grid.PointsAdjacentTo(p))
             yield return _grid[neighbor];
     }
-    public ConwayState Evolve()
+    public ConwayDiff Evolve()
     {
-        ConwayCell[,] result = _grid;
         foreach (Point p in _grid.AllPoints)
         {
             (int x, int y) = p;
-            int neighborCount = NeighborsOf(p).Select(x => (int)x)
-                                              .Aggregate((x, y) => x + y);
+            int neighborCount = NeighborsOf(p).Count(x => x);
             foreach (ConwayRule rule in ConwayRules.All)
             {
-                if (rule(_grid[p], neighborCount) is ConwayCell cell)
+                if (rule(_grid[p], neighborCount) is ConwayCell cell && cell != _grid[p])
                 {
-                    result[p.X, p.Y] = cell;
+                    yield return p;
                     break;
                 }
             }
         }
-        return result;
     }
     public static implicit operator ConwayState(ConwayCell[,] grid)
         => new(grid);
+    public static ConwayState operator +(ConwayState state, ConwayDiff diff)
+    {
+        ConwayCell[,] result = state._grid;
+        foreach ((int x, int y) in diff)
+            result[x, y] = !state._grid[x, y];
+        return result;
+    }
+    public IEnumerable<Point> LiveCells
+    {
+        get
+        {
+            foreach (Point point in _grid.AllPoints)
+                if (_grid[point])
+                    yield return point;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/conway"
 @using d9.dgl.conway;
+@using d9.aoc.core;
 @using Excubo.Blazor.Canvas
 @using Excubo.Blazor.Canvas.Contexts
 
@@ -13,13 +14,25 @@
 
 @code {
     private Canvas Canvas;
-    private ConwayGame Game = new(150, 300, 0.1);
+    private ConwayGame Game 
+        = new(150, 300, 0.1);
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (first)
+            await Draw(Game.CurrentState.LiveCells);
+    }
     private async Task Evolve()
     {
-
+        await foreach (ConwayState state in Game.Evolve())
+            await Draw(state.LiveCells);
     }
-    private async Task Draw(Context2D context)
+    private async Task Draw(IEnumerable<Point<int>> liveCells)
     {
-        context.PixelManipulation.CreateImageDataAsync()
+        await using Context2D context = await Canvas.GetContext2DAsync();
+        await context.FillStyleAsync("white");
+        await context.FillRectAsync(0, 0, Game.Width, Game.Height);
+        await context.FillStyleAsync("black");
+        foreach ((int x, int y) in liveCells)
+            await context.FillRectAsync(x, y, 1, 1);
     }
 }
