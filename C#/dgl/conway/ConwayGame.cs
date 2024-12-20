@@ -1,10 +1,11 @@
 ﻿using d9.dgl.framework;
 
 namespace d9.dgl.conway;
-internal class ConwayGame
+public class ConwayGame
 {
     private readonly List<ConwayState> _states = [];
     public ConwayState LatestState => _states.Last();
+    public int Width => 
     public ConwayGame(int width, int height, double cellProbability)
     {
         Random random = new();

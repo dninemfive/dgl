@@ -1,8 +1,8 @@
 ﻿namespace d9.dgl.conway;
 
-internal readonly struct ConwayState(ConwayGrid grid)
+public readonly struct ConwayState(ConwayGrid grid)
 {
-    internal readonly ConwayGrid _grid = grid;
+    public readonly ConwayGrid _grid = grid;
     public IEnumerable<ConwayCell> NeighborsOf(Point p)
     {
         foreach (Point neighbor in _grid.PointsAdjacentTo(p))

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34219.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dgl", "dgl.csproj", "{AEF80B7B-9B29-4070-8C1F-7E5A659FC5AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgl", "dgl.csproj", "{AEF80B7B-9B29-4070-8C1F-7E5A659FC5AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dgl.viz", "..\dgl.viz\dgl.viz.csproj", "{AC3EEC5D-C378-4FAE-87A3-18D49239241B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AEF80B7B-9B29-4070-8C1F-7E5A659FC5AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEF80B7B-9B29-4070-8C1F-7E5A659FC5AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEF80B7B-9B29-4070-8C1F-7E5A659FC5AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC3EEC5D-C378-4FAE-87A3-18D49239241B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3EEC5D-C378-4FAE-87A3-18D49239241B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3EEC5D-C378-4FAE-87A3-18D49239241B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3EEC5D-C378-4FAE-87A3-18D49239241B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

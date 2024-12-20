@@ -1,0 +1,25 @@
+﻿@page "/conway"
+@using d9.dgl.conway;
+@using Excubo.Blazor.Canvas
+@using Excubo.Blazor.Canvas.Contexts
+
+<PageTitle>Conway's Game of Life</PageTitle>
+
+<h1>Conway's Game of Life</h1>
+
+<Canvas @ref="Canvas" width="150px" height="300px" />
+
+<button class="btn btn-primary" @onclick="Evolve">Click me</button>
+
+@code {
+    private Canvas Canvas;
+    private ConwayGame Game = new(150, 300, 0.1);
+    private async Task Evolve()
+    {
+
+    }
+    private async Task Draw(Context2D context)
+    {
+        context.PixelManipulation.CreateImageDataAsync()
+    }
+}
