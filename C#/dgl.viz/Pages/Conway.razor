@@ -19,16 +19,15 @@
     private bool Playing = false;
     private async Task Evolve()
     {
-        await foreach (ConwayState state in Game.Evolve())
-            await Draw(state.LiveCells);
+        await Draw(Game.EvolveAsync());
     }
-    private async Task Draw(IEnumerable<Point<int>> liveCells)
+    private async Task Draw(IAsyncEnumerable<Point<int>> liveCells)
     {
         await using Context2D context = await Canvas.GetContext2DAsync();
         await context.FillStyleAsync("white");
-        await context.FillRectAsync(0, 0, Game.Width, Game.Height);
+        await context.FillRectAsync(0, 0, Game.Width * Scale, Game.Height * Scale);
         await context.FillStyleAsync("black");
-        foreach ((int x, int y) in liveCells)
+        await foreach ((int x, int y) in liveCells)
             await context.FillRectAsync(Scale * x, Scale * y, Scale, Scale);
     }
 }

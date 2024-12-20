@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace d9.dgl.conway;
+﻿namespace d9.dgl.conway;
 
 public readonly struct ConwayState(ConwayGrid grid)
 {
@@ -12,35 +10,30 @@ public readonly struct ConwayState(ConwayGrid grid)
         foreach (Point neighbor in _grid.PointsAdjacentTo(p))
             yield return _grid[neighbor];
     }
-    internal bool? Evolve(Point p)
+    private Point? ShouldChange(Point p)
     {
         int neighborCount = NeighborsOf(p).Count(x => x);
         foreach (ConwayRule rule in ConwayRules.All)
             if (rule(_grid[p], neighborCount) is ConwayCell cell && cell != _grid[p])
-                return cell;
+                return p;                
         return null;
     }
-    private IEnumerable<Task<(Point p, bool? value)>> EvolutionTasks()
+    public async IAsyncEnumerable<Point> EvolveAsync()
     {
         ConwayState _this = this;
-        foreach (Point p in _grid.AllPoints)
-            yield return Task.Run(() => (p, _this.Evolve(p)));
-    }
-    // https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.parallel.foreach?view=net-9.0
-    // https://stackoverflow.com/a/56518630
-    // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/iteration-statements#await-foreach
-    public async IAsyncEnumerable<Point> Evolve()
-    {
-        List<Task<(Point p, bool? value)>> tasks = EvolutionTasks().ToList();
-        while(tasks.Any())
-        {
-            Task<(Point p, bool? value)> task = await Task.WhenAny(tasks);
-            (Point p, bool? value) = await task;
-            tasks.Remove(task);
-        }
+        Point?[] changed = await Task.WhenAll(
+                                    _grid.AllPoints.Select(
+                                        x => Task.Run(
+                                            () => _this.ShouldChange(x))));
+        foreach (Point? p in changed)
+            if (p is Point result)
+                yield return result;
+        
     }
     public static implicit operator ConwayState(ConwayCell[,] grid)
         => new(grid);
+    public static implicit operator ConwayCell[,](ConwayState state)
+        => state._grid;
     public static ConwayState operator +(ConwayState state, ConwayDiff diff)
     {
         ConwayCell[,] result = state._grid;

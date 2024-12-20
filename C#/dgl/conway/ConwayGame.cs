@@ -3,7 +3,6 @@
 namespace d9.dgl.conway;
 public class ConwayGame
 {
-    private readonly List<ConwayDiff> _diffs = [];
     public ConwayState CurrentState;
     public int Width => CurrentState.Width;
     public int Height => CurrentState.Height;
@@ -17,18 +16,17 @@ public class ConwayGame
         }
         CurrentState = state;
     }
-    private async Task<ConwayState> Evolve()
-    {        
-        ConwayDiff diff = await Task.Run(CurrentState.Evolve);
-        lock(_diffs)
-            _diffs.Add(diff);
-        CurrentState += diff;
-        return CurrentState;
-    }
-    public async IAsyncEnumerable<ConwayState> Evolve(int times = 1)
-    {
-        ArgumentOutOfRangeException.ThrowIfLessThan(times, 1, $"Cannot evolve {times} times!");
-        for(int i = 0; i < times; i++)
-            yield return await Evolve();
+
+    public async IAsyncEnumerable<Point> EvolveAsync() {
+        // https://stackoverflow.com/a/1460660
+        ConwayCell[,] nextState = CurrentState;
+        await foreach (Point p in CurrentState.EvolveAsync())
+        {
+            (int x, int y) = p;
+            nextState[x, y] = !nextState[x, y];
+            if (nextState[x, y])
+                yield return p;
+        }
+        CurrentState = nextState;
     }
 }
