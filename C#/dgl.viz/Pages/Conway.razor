@@ -8,19 +8,15 @@
 
 <h1>Conway's Game of Life</h1>
 
-<Canvas @ref="Canvas" width="150px" height="300px" />
+<Canvas @ref="Canvas" width="640px" height="640px" />
 
 <button class="btn btn-primary" @onclick="Evolve">Click me</button>
 
 @code {
     private Canvas Canvas;
-    private ConwayGame Game 
-        = new(150, 300, 0.1);
-    protected override async Task OnAfterRenderAsync(bool first)
-    {
-        if (first)
-            await Draw(Game.CurrentState.LiveCells);
-    }
+    private ConwayGame Game = new(320, 320, 0.1);
+    private const int Scale = 2;
+    private bool Playing = false;
     private async Task Evolve()
     {
         await foreach (ConwayState state in Game.Evolve())
@@ -33,6 +29,6 @@
         await context.FillRectAsync(0, 0, Game.Width, Game.Height);
         await context.FillStyleAsync("black");
         foreach ((int x, int y) in liveCells)
-            await context.FillRectAsync(x, y, 1, 1);
+            await context.FillRectAsync(Scale * x, Scale * y, Scale, Scale);
     }
 }
