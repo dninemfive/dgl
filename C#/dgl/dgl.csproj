@@ -4,6 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>d9.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="d9.aoc.core">
+      <HintPath>..\..\..\aoc\src\core\bin\Release\net8.0\d9.aoc.core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
