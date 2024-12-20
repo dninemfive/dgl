@@ -1,5 +1,4 @@
-﻿
-using d9.dgl.conway;
+﻿namespace d9.dgl.conway;
 
 internal readonly struct ConwayState(ConwayGrid grid)
 {
