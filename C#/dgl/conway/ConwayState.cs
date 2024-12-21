@@ -5,6 +5,9 @@ public readonly struct ConwayState(ConwayGrid grid)
     private readonly ConwayGrid _grid = grid;
     public int Width => _grid.Width;
     public int Height => _grid.Height;
+    public IEnumerable<Point> AllPoints => _grid.AllPoints;
+    public ConwayCell this[int x, int y]
+        => _grid[x, y];
     public IEnumerable<ConwayCell> NeighborsOf(Point p)
     {
         foreach (Point neighbor in _grid.PointsAdjacentTo(p))

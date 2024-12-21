@@ -17,7 +17,12 @@ public class ConwayGame
         CurrentState = state;
     }
 
-    public async IAsyncEnumerable<Point> EvolveAsync() {
+    public async Task EvolveAsync()
+    {
+        await foreach (Point _ in EvolveLiveCellsAsync())
+            ;
+    }
+    public async IAsyncEnumerable<Point> EvolveLiveCellsAsync() {
         // https://stackoverflow.com/a/1460660
         ConwayCell[,] nextState = CurrentState;
         await foreach (Point p in CurrentState.EvolveAsync())

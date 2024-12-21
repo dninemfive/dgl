@@ -1,4 +1,5 @@
 ﻿@page "/conway"
+@using System.Diagnostics;
 @using d9.dgl.conway;
 @using d9.aoc.core;
 @using Excubo.Blazor.Canvas
@@ -12,22 +13,54 @@
 
 <button class="btn btn-primary" @onclick="Evolve">Click me</button>
 
+<label>@(TimeElapsed)</label>
+
 @code {
     private Canvas Canvas;
+    private Context2D _context;
     private ConwayGame Game = new(320, 320, 0.1);
     private const int Scale = 2;
     private bool Playing = false;
+    private string TimeElapsed = "";
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            _context = await Canvas.GetContext2DAsync();
+    }
     private async Task Evolve()
     {
-        await Draw(Game.EvolveAsync());
+        //await Draw("#AAAAAA", "#777777");
+        TimeElapsed = "...";
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        await Draw(Game.EvolveLiveCellsAsync());
+        stopwatch.Stop();
+        TimeElapsed = $"{stopwatch.Elapsed:g}";
+        stopwatch.Restart();
+        await Draw();
+        stopwatch.Stop();
+        TimeElapsed += $"/{stopwatch.Elapsed:g}";
     }
     private async Task Draw(IAsyncEnumerable<Point<int>> liveCells)
     {
-        await using Context2D context = await Canvas.GetContext2DAsync();
-        await context.FillStyleAsync("white");
-        await context.FillRectAsync(0, 0, Game.Width * Scale, Game.Height * Scale);
-        await context.FillStyleAsync("black");
+        await using Batch2D batch = _context.CreateBatch();
+        await batch.FillStyleAsync("white");
+        await batch.FillRectAsync(0, 0, Game.Width * Scale, Game.Height * Scale);
+        await batch.FillStyleAsync("black");
         await foreach ((int x, int y) in liveCells)
+            await batch.FillRectAsync(Scale * x, Scale * y, Scale, Scale);
+    }
+    private async Task Draw(string aliveColor = "black", string deadColor = "white")
+    {
+        await using Context2D context = await Canvas.GetContext2DAsync();
+        bool alive = true;
+        foreach((int x, int y) in Game.CurrentState.AllPoints)
+        {
+            if(alive != Game.CurrentState[x, y])
+            {
+                alive = Game.CurrentState[x, y];
+                await context.FillStyleAsync(alive ? aliveColor : deadColor);
+            }
             await context.FillRectAsync(Scale * x, Scale * y, Scale, Scale);
+        }
     }
 }
