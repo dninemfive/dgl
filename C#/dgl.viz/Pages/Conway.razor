@@ -22,6 +22,7 @@
     private const int Scale = 2;
     private bool Playing = false;
     private string TimeElapsed = "";
+    private IEnumerable<Point<int>>? _data = null;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -29,24 +30,40 @@
     }
     private async Task Evolve()
     {
-        //await Draw("#AAAAAA", "#777777");
         TimeElapsed = "...";
         Stopwatch stopwatch = Stopwatch.StartNew();
-        await Draw(Game.EvolveLiveCellsAsync());
+        if (_data is IAsyncEnumerable<Point<int>> data)
+        {
+            await Draw(data, "#777777", "#AAAAAA");
+            stopwatch.Stop();
+            TimeElapsed = $"{stopwatch.Elapsed:g}";
+            stopwatch.Restart();
+        }
+        _data = Game.EvolveLiveCellsAsync().ToBlockingEnumerable();
         stopwatch.Stop();
-        TimeElapsed = $"{stopwatch.Elapsed:g}";
+        TimeElapsed += $"/{stopwatch.Elapsed:g}";
         stopwatch.Restart();
-        await Draw();
+        await Draw(_data, "black", "white");
         stopwatch.Stop();
         TimeElapsed += $"/{stopwatch.Elapsed:g}";
     }
-    private async Task Draw(IAsyncEnumerable<Point<int>> liveCells)
+    private async Task Draw(IAsyncEnumerable<Point<int>> liveCells, string aliveColor, string deadColor)
     {
         await using Batch2D batch = _context.CreateBatch();
-        await batch.FillStyleAsync("white");
+        await batch.FillStyleAsync(deadColor);
         await batch.FillRectAsync(0, 0, Game.Width * Scale, Game.Height * Scale);
-        await batch.FillStyleAsync("black");
+        await batch.FillStyleAsync(aliveColor);
         await foreach ((int x, int y) in liveCells)
+            await batch.FillRectAsync(Scale * x, Scale * y, Scale, Scale);
+    }
+    private async Task Draw(IEnumerable<Point<int>> liveCells, string aliveColor, string deadColor)
+    {
+        await using Batch2D batch = _context.CreateBatch();
+        await batch.FillStyleAsync(deadColor);
+        await batch.FillRectAsync(0, 0, Game.Width * Scale, Game.Height * Scale);
+        await batch.FillStyleAsync(aliveColor);
+        // todo: convert points to tasks; task.whenall (or parallel.foreach)
+        foreach ((int x, int y) in liveCells)
             await batch.FillRectAsync(Scale * x, Scale * y, Scale, Scale);
     }
     private async Task Draw(string aliveColor = "black", string deadColor = "white")
